@@ -19,7 +19,7 @@ public:
 
 public:
   Sensor(const SensorConfig *config,
-         void (*callback)(byte *buffer, size_t len, ISensor *sensor)) {
+         void (*callback)(byte *buffer, size_t len, float value, ISensor *sensor)) {
     this->config = config;
     switch (this->config->sensor_type) {
     case SensorConfig::ANALOG:
@@ -33,7 +33,6 @@ public:
       break;
     }
   }
-  ~Sensor() { delete sensor; }
 
   void loop() { this->sensor->loop(); }
 };

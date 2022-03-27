@@ -41,7 +41,7 @@ class SML_Sensor: public ISensor {
 public:
   
   SML_Sensor(const SensorConfig *config,
-         void (*callback)(byte *buffer, size_t len, ISensor *sensor)) {
+         void (*callback)(byte *buffer, size_t len, float value, ISensor *sensor)) {
     this->config = config;
     DEBUG("Initializing sensor %s...", this->config->name);
     this->callback = callback;
@@ -80,7 +80,6 @@ private:
   uint8_t bytes_until_checksum = 0;
   uint8_t loop_counter = 0;
   State state = INIT;
-  void (*callback)(byte *buffer, size_t len, ISensor *sensor) = NULL;
   unique_ptr<JLed> status_led;
 
   void run_current_state() {
@@ -235,7 +234,7 @@ private:
 
     // Call listener
     if (this->callback != NULL) {
-      this->callback(this->buffer, this->position, this);
+      this->callback(this->buffer,this->position, 0.0, this);
     }
 
     // Go to standby mode, if throttling is enabled

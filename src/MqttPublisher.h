@@ -5,9 +5,11 @@
 #include "debug.h"
 #include <Ticker.h>
 #include <PangolinMQTT.h>
-#include <string.h>
+//#include <string.h>
 #include <sml/sml_file.h>
 #include <Ticker.h>
+#include <ESP8266WiFi.h>
+#include <string>
 
 #define MQTT_RECONNECT_DELAY 5
 #define MQTT_LWT_TOPIC "LWT"
@@ -59,7 +61,7 @@ public:
     publish(baseTopic + "info", message);
   }
 
-  void publish(ISensor *sensor, sml_file *file)
+  void publish_sml(ISensor *sensor, sml_file *file)
   {
 
     for (int i = 0; i < file->messages_len; i++)
@@ -118,6 +120,14 @@ public:
     }
   }
 
+  void publish(ISensor *sensor, float value)
+  {
+    String entryTopic = baseTopic + "sensor/" + (sensor->config->name) +  "/";
+    char array[20];
+    sprintf(array, "%f", value);
+    publish(entryTopic + "value", array);
+  }
+ 
   void connect()
   {
     if (this->connected)

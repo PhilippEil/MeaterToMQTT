@@ -16,6 +16,7 @@ public:
   const uint8_t status_led_pin;
   const uint8_t interval;
   const sensor_t sensor_type;
+  const float factor;
 };
 
 #endif
