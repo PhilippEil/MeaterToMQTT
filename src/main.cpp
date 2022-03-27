@@ -33,7 +33,7 @@ boolean needReset = false;
 boolean connected = false;
 
 
-void process_message(byte *buffer, size_t len, Sensor *sensor)
+void process_message(byte *buffer, size_t len, ISensor *sensor)
 {
 	// Parse
 	sml_file *file = sml_file_parse(buffer + 8, len - 16);

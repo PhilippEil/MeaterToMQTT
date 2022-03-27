@@ -59,7 +59,7 @@ public:
     publish(baseTopic + "info", message);
   }
 
-  void publish(Sensor *sensor, sml_file *file)
+  void publish(ISensor *sensor, sml_file *file)
   {
 
     for (int i = 0; i < file->messages_len; i++)
