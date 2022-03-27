@@ -24,10 +24,11 @@ Digital_sensor::Digital_sensor(const SensorConfig *config,
                                void (*callback)(byte *buffer, size_t len,
                                                 float value, ISensor *sensor)) {
   this->config = config;
-  DEBUG("Initializing sensor %s...", this->config->name);
+  DEBUG("Initializing sensor %s", this->config->name);
   this->callback = callback;
   this->callback(NULL, 0, 0, this);
   this->lastUpdate = millis();
+  pinMode(this->config->pin, INPUT_PULLUP);
 }
 
 Digital_sensor::~Digital_sensor() {}
@@ -36,16 +37,17 @@ void Digital_sensor::loop() {
   bool currentState = digitalRead(this->config->pin);
   if (currentState != lastState && currentState == true) {
     clickCount++;
-    DEBUG("increment count from sensor %s to %d", this->config->name, this->clickCount);
+    DEBUG("increment count from sensor %s to %d", this->config->name,
+          this->clickCount);
   }
   lastState = currentState;
 
   if ((millis() - this->lastUpdate) >= (this->config->interval * 1000)) {
     this->lastUpdate = millis();
     float transmitValue = (float)this->clickCount * this->config->factor;
-    this->callback(NULL, 0, transmitValue , this);
+    this->callback(NULL, 0, transmitValue, this);
     clickCount = 0;
-    DEBUG("clear count from sensor %s...", this->config->name);
+    DEBUG("clear count from sensor %s", this->config->name);
   }
   yield();
 }

@@ -37,11 +37,11 @@ uint64_t millis64() {
   return (uint64_t)high32 << 32 | low32;
 }
 
-class SML_Sensor: public ISensor {
+class SML_Sensor : public ISensor {
 public:
-  
   SML_Sensor(const SensorConfig *config,
-         void (*callback)(byte *buffer, size_t len, float value, ISensor *sensor)) {
+             void (*callback)(byte *buffer, size_t len, float value,
+                              ISensor *sensor)) {
     this->config = config;
     DEBUG("Initializing sensor %s...", this->config->name);
     this->callback = callback;
@@ -234,7 +234,7 @@ private:
 
     // Call listener
     if (this->callback != NULL) {
-      this->callback(this->buffer,this->position, 0.0, this);
+      this->callback(this->buffer, this->position, 0.0, this);
     }
 
     // Go to standby mode, if throttling is enabled
