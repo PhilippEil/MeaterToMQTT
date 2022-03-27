@@ -1,5 +1,5 @@
 # MeterToMQTT
-**!The software is not fully tested!**
+**!The software is not fully tested!**\
 An ESP8266 based sensor to MQTT gateway.
 This gateway can not only read your smart electricity meter with SML, it can also read analog and digital sensors. Which are for example attached to water meters or gas meters.
 
