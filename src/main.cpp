@@ -44,8 +44,6 @@ IotWebConfParameter params[] = {
 boolean needReset = false;
 boolean connected = false;
 
-Scheduler ts;
-
 void process_message(byte *buffer, size_t len, float value, ISensor *sensor) {
   if (sensor->config->sensor_type == SensorConfig::SML_READER) {
     // Parse
@@ -127,7 +125,6 @@ void loop() {
   }
 
   iotWebConf.doLoop();
-  ts.execute();
   yield();
 }
 
