@@ -1,8 +1,10 @@
-# SMLReader
-
-An ESP8266 based smart meter (SML) to MQTT gateway 
+# MeterToMQTT
+**!The software is not fully tested!**
+An ESP8266 based sensor to MQTT gateway.
+This gateway can not only read your smart electricity meter with SML, it can also read analog and digital sensors. Which are for example attached to water meters or gas meters.
 
 ## About
+It is based on the SMLReader repository of [mruettgers](https://github.com/mruettgers/SMLReader).
 
 The aim of this project is to read the meter readings of modern energy meters and make them available via MQTT.
 
@@ -27,27 +29,10 @@ smartmeter/mains/sensor/1/obis/1-0:2.8.2/255/value 0.0
 smartmeter/mains/sensor/1/obis/1-0:16.7.0/255/value 451.2
 ```
 
-### Hardware
-
-#### Reading head
-
-The reading head consists of a phototransistor (BPW 40) and a 1 kΩ pull-up resistor connected to one of the GPIO pins of the microcontroller.
-Other phototransistors or the use of an internal pull-up resistor will probably work, too.
-
-The housing of my reading head has been 3D-printed using the [STL files](http://www.stefan-weigert.de/php_loader/sml.php) from [Stefan Weigert](http://www.stefan-weigert.de). 
-
-A ring magnet (in my case dimensioned 27x21x3mm) ensures that the reading head keeps stuck on the meter.
-
-The phototransistor has been fixed with hot glue within the housing.
-
-![Reading Head](doc/assets/SMLReader_Img_ReadingHead.jpg "Reading Head") ![Reading Head](doc/assets/SMLReader_Img_ReadingHead_Close.jpg "Reading Head") ![D1](doc/assets/SMLReader_Img_D1.jpg "WeMos D1 mini")
-
-#### Schematic diagram
-![Schematic diagram](doc/assets/SMLReader_Schema.png)
-
 ## Getting started
+First you need to configure the software, for help visit the [wiki](https://github.com/PhilippEil/MeterToMQTT/wiki) 
 
-To get started, the software must first somehow get onto the device. 
+Next the software must first somehow get onto the device. 
 This can be done in several ways.
 
 ### Uploading a precompiled binary
@@ -108,40 +93,6 @@ Hard resetting via RTS pin...
 
 You should be able to use your preferred IDE to build and flash SMLReader if you take care of the dependencies and the build flags configured in the `platform.io` file.
 I strongly recommend using PlatformIO as it takes care of that itself.
-
-#### Configuration
-
-The configuration of the reading heads is done by editing `src/config.h` and adjusting  `SENSOR_CONFIGS` (see below).
-
-```c++
-static const SensorConfig SENSOR_CONFIGS[] = {
-    {.pin = D2, // GPIO pin of the phototransistor
-     .name = "1", // Sensor name used in MQTT topic
-     .numeric_only = false, // If "true", only numeric values are being published via MQTT
-     .status_led_enabled = true, // Flash status LED (3 times) when an SML start sequence has been found
-     .status_led_inverted = true, // Some LEDs (like the ESP8266 builtin LED) require an inverted output signal
-     .status_led_pin = LED_BUILTIN, // GPIO pin used for sensor status LED
-     .interval = 0 // If greater than 0, messages are published every [interval] seconds
-    },
-    {.pin = D5,
-     .name = "2",
-     .numeric_only = false,
-     .status_led_enabled = true,
-     .status_led_inverted = true,
-     .status_led_pin = LED_BUILTIN,
-     .interval = 0
-    },
-    {.pin = D6,
-     .name = "3",
-     .numeric_only = false,
-     .status_led_enabled = true,
-     .status_led_inverted = true,
-     .status_led_pin = LED_BUILTIN,
-     .interval = 15
-    }
-};
-```
-
 
 #### Building
 
@@ -257,6 +208,8 @@ docker run -it --device /dev/ttyUSB0 -v $(pwd):/src --rm mruettgers/esptool ash 
 
 ## Acknowledgements
 
+* [mruettgers/SMLReader](https://github.com/mruettgers/SMLReader)
+
 ### Third party libraries
 * [ESPSoftwareSerial](https://github.com/plerup/espsoftwareserial)
 * [IotWebConf](https://github.com/prampec/IotWebConf)
@@ -276,18 +229,9 @@ docker run -it --device /dev/ttyUSB0 -v $(pwd):/src --rm mruettgers/esptool ash 
 ## Donate
 
 ### Paypal
+
+mruettgers:
 [![Paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GK95YZCEGJT84)
-
-## Roadmap
-
-* [ ] Use LITTLEFS for config storage
-* [ ] New configuration GUI based on Preact
-* [ ] Configuration of sensors via web interface
-* [ ] Add list of devices that are known to work
-* [ ] Support for ASCII based SML messages (also known as "SML in Textform")
-* [ ] Deep sleep for battery powered devices
-* [ ] Grafana / InfluxDB tutorial based on docker
-* [ ] KNX support for sending readings via an IP gateway to the bus
 
 ## License
 
