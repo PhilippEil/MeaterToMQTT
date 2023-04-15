@@ -6,8 +6,8 @@
 
 class Analog_sensor : public ISensor {
 private:
-  static constexpr int FILTER_SIZE = 400;
-  static constexpr int TRIGGER_DISTANZ = 15;
+  static constexpr int FILTER_SIZE = 500;
+  static constexpr int TRIGGER_DISTANZ = 10;
   static constexpr int UPDATE_RATE_MS = 10;
 
 private:
@@ -19,6 +19,7 @@ private:
   int readings[FILTER_SIZE]{0};
   int readIndex;
   int average;
+  int analogValue;
   int upperLimit;
   int lowerLimit;
   bool lock{false};
@@ -39,9 +40,9 @@ Analog_sensor::Analog_sensor(const SensorConfig *config,
   DEBUG("Initializing sensor %s", this->config->name);
   this->callback = callback;
 
-  int analogValue = analogRead(this->config->pin);
+  this->analogValue = analogRead(this->config->pin);
   for (int i = 0; i < FILTER_SIZE; i++) {
-    this->readings[readIndex] = analogValue;
+    this->readings[readIndex] = this->analogValue;
   }
 }
 
@@ -50,9 +51,9 @@ Analog_sensor::~Analog_sensor() {}
 void Analog_sensor::loop() {
   if ((millis() - this->lastRead) >= this->UPDATE_RATE_MS) {
     this->lastRead = millis();
-    int analogValue = analogRead(this->config->pin);
+    this->analogValue = analogRead(this->config->pin);
     this->sum = this->sum - this->readings[readIndex];
-    this->readings[readIndex] = analogValue;
+    this->readings[readIndex] = this->analogValue;
     this->sum = this->sum + readings[readIndex];
     this->readIndex++;
 
@@ -64,7 +65,10 @@ void Analog_sensor::loop() {
     this->upperLimit = this->average + TRIGGER_DISTANZ;
     this->lowerLimit = this->average - TRIGGER_DISTANZ;
 
-    if (analogValue < this->lowerLimit && this->lock == false) {
+    //DEBUG("sensor %s; analogValue:%d, average:%d, upperLimit:%d, lowerLimit:%d",this->config->name ,lastRead, average, upperLimit, lowerLimit);
+    DEBUG("sensor %s; analogValue:%d, average:%d, lowerLimit:%d, upperLimit:%d ,counter:%d",this->config->name ,analogValue, average, lowerLimit,upperLimit,clickCount);
+
+    if (this->analogValue < this->lowerLimit && this->lock == false) {
       this->clickCount++;
       this->lock = true;
       DEBUG("increment count from sensor %s to %d", this->config->name,

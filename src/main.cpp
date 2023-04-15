@@ -8,11 +8,16 @@
 #include <debug.h>
 #include <list>
 #include <sml/sml_file.h>
+#include <time.h>
+
+#define MY_NTP_SERVER "at.pool.ntp.org"           
+#define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"   
 
 std::list<Sensor *> *sensors = new std::list<Sensor *>();
 
 void wifiConnected();
 void configSaved();
+void checkForSystemReset();
 
 DNSServer dnsServer;
 WebServer server(80);
@@ -21,6 +26,9 @@ WiFiClient net;
 
 MqttConfig mqttConfig;
 MqttPublisher publisher;
+
+time_t now;
+tm tm;
 
 IotWebConf iotWebConf(WIFI_AP_SSID, &dnsServer, &server,
                       WIFI_AP_DEFAULT_PASSWORD, CONFIG_VERSION);
@@ -108,6 +116,8 @@ void setup() {
   server.on("/", [] { iotWebConf.handleConfig(); });
   server.onNotFound([]() { iotWebConf.handleNotFound(); });
 
+  configTime(MY_TZ, MY_NTP_SERVER);
+
   DEBUG("Setup done.");
 }
 
@@ -125,6 +135,7 @@ void loop() {
   }
 
   iotWebConf.doLoop();
+  checkForSystemReset();
   yield();
 }
 
@@ -137,4 +148,14 @@ void wifiConnected() {
   DEBUG("WiFi connection established.");
   connected = true;
   publisher.connect();
+}
+
+void checkForSystemReset(){
+  time(&now);
+  localtime_r(&now, &tm);
+
+  if(tm.tm_wday == 1 && tm.tm_hour == 00 && tm.tm_min == 00 && tm.tm_sec <= 3){
+    ESP.restart();
+  }
+  
 }

@@ -15,32 +15,34 @@ const char *WIFI_AP_DEFAULT_PASSWORD = "";
 
 static const SensorConfig SENSOR_CONFIGS[] = {
     {.pin = D2,
-     .name = "1",
-     .numeric_only = false,
-     .status_led_enabled = true,
-     .status_led_inverted = true,
-     .status_led_pin = LED_BUILTIN,
-     .interval = 0,
-     .sensor_type = SensorConfig::SML_READER,
-     .factor = 1},
-    {.pin = D3,
-     .name = "GasSensorDigital_m3",
+     .name = "Stromzähler",
      .numeric_only = false,
      .status_led_enabled = true,
      .status_led_inverted = true,
      .status_led_pin = LED_BUILTIN,
      .interval = 30,
-     .sensor_type = SensorConfig::DIGITAL,
-     .factor = 0.01},
+     .sensor_type = SensorConfig::SML_READER,
+     .factor = 1}
+    ,
+    // {.pin = D3,
+    //  .name = "GasSensorDigital_m3",
+    //  .numeric_only = false,
+    //  .status_led_enabled = true,
+    //  .status_led_inverted = true,
+    //  .status_led_pin = LED_BUILTIN,
+    //  .interval = 30,
+    //  .sensor_type = SensorConfig::DIGITAL,
+    //  .factor = 0.01},
     {.pin = A0,
      .name = "GasSensorAnalog_m3",
      .numeric_only = false,
      .status_led_enabled = true,
      .status_led_inverted = true,
      .status_led_pin = LED_BUILTIN,
-     .interval = 30,
+     .interval = 60,
      .sensor_type = SensorConfig::ANALOG,
-     .factor = 0.01}};
+     .factor = 0.01}
+     };
 
 const uint8_t NUM_OF_SENSORS = sizeof(SENSOR_CONFIGS) / sizeof(SensorConfig);
 
